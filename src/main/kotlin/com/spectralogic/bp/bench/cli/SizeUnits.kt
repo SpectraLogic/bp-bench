@@ -14,7 +14,6 @@ enum class SizeUnits(val power: Double) {
     TB(12.0);
 
     companion object {
-        fun parse(name: String) = SizeUnits.valueOf(name.trim().toUpperCase())
-        fun names() = SizeUnits.values().map { it.name }.toTypedArray()
+        fun names() = values().map { Pair(it.name, it) }.toTypedArray()
     }
 }
