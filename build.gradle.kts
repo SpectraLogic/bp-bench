@@ -12,12 +12,7 @@ plugins {
 
 repositories {
     jcenter()
-}
-
-allprojects {
-    repositories {
-        maven("https://jitpack.io")
-    }
+    maven("https://jitpack.io")
 }
 
 tasks.withType<KotlinCompile> {
@@ -34,6 +29,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${project.property("kotlinxCoroutines")}")
     implementation("com.github.ajalt:clikt:${project.property("clikt")}")
     implementation("com.github.spectralogic.ds3_java_sdk:ds3-sdk:${project.property("ds3")}")
+
     testImplementation("io.kotlintest:kotlintest-runner-junit5:${project.property("kotlintest")}")
     testImplementation("io.mockk:mockk:${project.property("mockk")}")
 }
