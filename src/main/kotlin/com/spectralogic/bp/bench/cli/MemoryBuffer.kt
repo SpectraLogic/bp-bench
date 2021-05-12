@@ -17,11 +17,11 @@ class MemoryBuffer(private val bufferSize: Int, private val sizeOfFiles: Long, p
 
     private inner class DevNullByteChannel(private val bufferSize: Int, private val limit: Long) : SeekableByteChannel {
         private val backingArray: ByteArray = random.nextBytes(bufferSize)
-        private var position: Int = 0
+        private var position: Long = 0L
         private var isOpen: Boolean = true
 
         override fun isOpen(): Boolean = isOpen
-        override fun position(): Long = position()
+        override fun position(): Long = position
         override fun size(): Long = limit
         override fun truncate(size: Long): SeekableByteChannel = this
 
@@ -30,19 +30,20 @@ class MemoryBuffer(private val bufferSize: Int, private val sizeOfFiles: Long, p
         }
 
         override fun read(dst: ByteBuffer): Int {
-            val amountToRead = Math.min(dst.remaining(), bufferSize)
+            val amountToRead = dst.remaining().coerceAtMost(bufferSize)
             dst.put(backingArray, 0, amountToRead)
+            position += amountToRead
             return amountToRead
         }
 
         override fun write(src: ByteBuffer): Int {
-            val amountToWrite = Math.min(src.remaining(), bufferSize)
+            val amountToWrite = src.remaining().coerceAtMost(bufferSize)
             src.get(backingArray, 0, amountToWrite)
             return amountToWrite
         }
 
         override fun position(newPosition: Long): SeekableByteChannel {
-            position = newPosition.toInt()
+            position = newPosition
             return this
         }
     }

@@ -7,6 +7,7 @@
 package com.spectralogic.bp.bench.cli
 
 import com.github.ajalt.clikt.parameters.options.default
+import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.prompt
 import com.github.ajalt.clikt.parameters.options.validate
@@ -16,6 +17,7 @@ import com.github.ajalt.clikt.parameters.types.int
 import com.spectralogic.ds3client.Ds3ClientBuilder
 import com.spectralogic.ds3client.commands.HeadBucketRequest
 import com.spectralogic.ds3client.commands.HeadBucketResponse
+import com.spectralogic.ds3client.commands.PutObjectRequest
 import com.spectralogic.ds3client.commands.spectrads3.PutBucketSpectraS3Request
 import com.spectralogic.ds3client.helpers.Ds3ClientHelpers
 import com.spectralogic.ds3client.helpers.options.WriteJobOptions
@@ -23,8 +25,16 @@ import com.spectralogic.ds3client.models.Priority
 import com.spectralogic.ds3client.models.bulk.Ds3Object
 import com.spectralogic.ds3client.models.common.Credentials
 import com.spectralogic.ds3client.networking.FailedRequestException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flatMapMerge
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.time.Instant
-import kotlin.random.Random
+import kotlin.math.pow
 
 class WriteToTapeCommand :
     BpCommand(name = "put", help = "Attempt to put <NUMBER> objects of <SIZE> to <BUCKET> without disk IO") {
@@ -55,6 +65,7 @@ class WriteToTapeCommand :
     )
         .prompt()
         .validate { require(it.isNotEmpty()) { "Data policy must not be blank" } }
+    private val nakedPut by option("--naked-put", envvar = "NAKED_PUT").flag()
     private val priority: Priority by option(
         "-pri",
         "--priority",
@@ -65,6 +76,8 @@ class WriteToTapeCommand :
         .default(Priority.NORMAL)
 
     override fun run() {
+        val fileSize: Long = (size * 10.0.pow(sizeUnit.power)).toLong()
+        val buffer = MemoryBuffer(bufferSize, fileSize, randomSource)
         val client = Ds3ClientHelpers.wrap(
             Ds3ClientBuilder.create(endpoint, Credentials(clientId, secretKey))
                 .withHttps(false)
@@ -72,24 +85,43 @@ class WriteToTapeCommand :
                 .build()
         )
         client.ensureBucketExistsByName(bucket, dataPolicy)
-        val job = client.startWriteJob(
-            bucket, ds3ObjectSequence().toList(), WriteJobOptions.create()
-                .withPriority(priority)
-        )
-        job
-            .withMaxParallelRequests(threads)
-            .transfer(MemoryBuffer(bufferSize, (size * Math.pow(10.0, sizeUnit.power)).toLong(), randomSource))
+        if (nakedPut) {
+            CoroutineScope(Dispatchers.IO).launch {
+                ds3ObjectSequence().asFlow()
+                    .flatMapMerge(threads) {
+                        flow {
+                            try {
+                                val p = PutObjectRequest(bucket, it.name, RandomByteChannel(it.size), it.size)
+                                println("Sending putObject")
+                                val response = client.client.putObject(p)
+                                println("Sent the putObject")
+                                emit(response)
+                            } catch (t: Throwable) {
+                                println(t.message ?: "Unknown error during putObject")
+                            } finally {
+                                println("finally putObject")
+                            }
+                        }
+                    }
+                    .collect()
+            }.let { runBlocking { it.join() } }
+        } else {
+            val job = client.startWriteJob(
+                bucket, ds3ObjectSequence().toList(),
+                WriteJobOptions.create()
+                    .withPriority(priority)
+            )
+            job
+                .withMaxParallelRequests(threads)
+                .transfer(buffer)
+        }
     }
 
     private var itemName: Long = 0L
 
     private fun ds3ObjectSequence(): Sequence<Ds3Object> {
-        return generateSequence {
-            Ds3Object(
-                "bp-benchmark-${itemName++}-${Instant.now().toEpochMilli()}.txt",
-                (size * Math.pow(10.0, sizeUnit.power)).toLong()
-            )
-        }.take(itemNumber)
+        val fileSize: Long = (size * 10.0.pow(sizeUnit.power)).toLong()
+        return generateSequence { Ds3Object("bp-benchmark-${itemName++}-${Instant.now().toEpochMilli()}.txt", fileSize) }.take(itemNumber)
     }
 }
 
