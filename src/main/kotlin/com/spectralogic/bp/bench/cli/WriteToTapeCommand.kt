@@ -92,14 +92,11 @@ class WriteToTapeCommand :
                         flow {
                             try {
                                 val p = PutObjectRequest(bucket, it.name, RandomByteChannel(it.size), it.size)
-                                println("Sending putObject")
                                 val response = client.client.putObject(p)
-                                println("Sent the putObject")
                                 emit(response)
                             } catch (t: Throwable) {
                                 println(t.message ?: "Unknown error during putObject")
                             } finally {
-                                println("finally putObject")
                             }
                         }
                     }
