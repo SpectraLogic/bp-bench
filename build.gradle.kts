@@ -32,7 +32,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
     implementation("com.github.ajalt.clikt:clikt-jvm:3.5.0")
 
-    implementation("com.github.spectralogic.ds3_java_sdk:ds3-sdk:${project.property("ds3")}")
+    implementation("com.github.spectralogic.ds3_java_sdk:ds3-sdk:5.4.0")
 
     testImplementation("io.kotlintest:kotlintest-runner-junit5:3.4.2")
     testImplementation("io.mockk:mockk:1.12.4")
