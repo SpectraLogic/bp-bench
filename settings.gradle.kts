@@ -16,6 +16,9 @@ dependencyResolutionManagement {
         maven {
             url = uri("https://artifacts.eng.sldomain.com/repository/spectra/")
         }
+        maven {
+            url = uri("https://jitpack.io")
+        }
     }
     versionCatalogs {
         create("libs") {
@@ -26,11 +29,10 @@ dependencyResolutionManagement {
             version("kotlinTest", "3.4.2")
             version("kotlinxCoroutines", "1.6.2")
             version("mockk", "1.12.4")
-            version("ds3", "5.6.0-SNAPSHOT")
+            version("ds3", "5.6.0")
 
             library("cliktJvm", "com.github.ajalt.clikt", "clikt-jvm").versionRef("clikt")
-            library("ds3Bom", "com.spectralogic.ds3", "ds3-bom").versionRef("ds3")
-            library("ds3sdk", "com.spectralogic.ds3", "ds3-sdk").withoutVersion()
+            library("ds3sdk", "com.github.spectralogic", "ds3_java_sdk").versionRef("ds3")
             library("kotlinBom", "org.jetbrains.kotlin", "kotlin-bom").versionRef("kotlin")
             library("kotlinReflect", "org.jetbrains.kotlin", "kotlin-reflect").withoutVersion()
             library("kotlinStdlib", "org.jetbrains.kotlin", "kotlin-stdlib").withoutVersion()

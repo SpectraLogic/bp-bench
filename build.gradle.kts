@@ -15,7 +15,6 @@ group = "com.spectralogic"
 
 dependencies {
     implementation(platform(libs.kotlinBom))
-    implementation(platform(libs.ds3Bom))
 
     implementation(libs.cliktJvm)
     implementation(libs.ds3sdk)
