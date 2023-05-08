@@ -6,8 +6,10 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.7.10"
+    alias(libs.plugins.kotlinJvm)
     application
+    alias(libs.plugins.owaspDepCheck)
+    alias(libs.plugins.versions)
 }
 
 group = "com.spectralogic"
@@ -17,25 +19,22 @@ tasks {
     }
 }
 
-repositories {
-    mavenCentral()
-    maven("https://jitpack.io")
-}
-
 val test by tasks.getting(Test::class) {
     useJUnitPlatform { }
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.7.10")
-    implementation("org.jetbrains.kotlin:kotlin-reflect:1.7.10")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
-    implementation("com.github.ajalt.clikt:clikt-jvm:3.5.0")
+    implementation(platform(libs.kotlinBom))
+    implementation(platform(libs.ds3Bom))
 
-    implementation("com.github.spectralogic.ds3_java_sdk:ds3-sdk:5.4.0")
+    implementation(libs.cliktJvm)
+    implementation(libs.ds3sdk)
+    implementation(libs.kotlinReflect)
+    implementation(libs.kotlinStdlib)
+    implementation(libs.kotlinxCoroutinesCore)
 
-    testImplementation("io.kotlintest:kotlintest-runner-junit5:3.4.2")
-    testImplementation("io.mockk:mockk:1.12.4")
+    testImplementation(libs.kotlinTestRunnerJunit5)
+    testImplementation(libs.mockk)
 }
 
 application {
