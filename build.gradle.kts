@@ -1,9 +1,8 @@
 /*
  * ****************************************************************************
- *   Copyright 2014-2019 Spectra Logic Corporation. All Rights Reserved.
+ *   Copyright 2014-2023 Spectra Logic Corporation. All Rights Reserved.
  * ***************************************************************************
  */
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     alias(libs.plugins.kotlinJvm)
@@ -13,15 +12,6 @@ plugins {
 }
 
 group = "com.spectralogic"
-tasks {
-    withType<KotlinCompile> {
-        kotlinOptions.jvmTarget = "18"
-    }
-}
-
-val test by tasks.getting(Test::class) {
-    useJUnitPlatform { }
-}
 
 dependencies {
     implementation(platform(libs.kotlinBom))
@@ -35,6 +25,23 @@ dependencies {
 
     testImplementation(libs.kotlinTestRunnerJunit5)
     testImplementation(libs.mockk)
+}
+
+kotlin {
+    jvmToolchain {
+        languageVersion.set(JavaLanguageVersion.of(18))
+        vendor.set(JvmVendorSpec.ADOPTIUM)
+    }
+}
+
+tasks.test {
+    useJUnitPlatform { }
+}
+
+tasks.compileKotlin {
+    kotlinOptions {
+        freeCompilerArgs = listOf("-opt-in=kotlinx.coroutines.FlowPreview")
+    }
 }
 
 application {
