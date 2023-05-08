@@ -41,3 +41,8 @@ dependencies {
 application {
     mainClass.set("com.spectralogic.bp.bench.AppKt")
 }
+
+tasks.wrapper {
+    // to upgrade the gradle wrapper, bump the version below and run ./gradlew wrapper twice
+    gradleVersion = "8.1.1"
+}
