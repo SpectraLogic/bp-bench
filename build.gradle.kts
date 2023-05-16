@@ -14,6 +14,7 @@ plugins {
 group = "com.spectralogic"
 
 dependencies {
+    implementation(platform(libs.ds3Bom))
     implementation(platform(libs.kotlinBom))
 
     implementation(libs.cliktJvm)
