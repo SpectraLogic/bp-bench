@@ -13,12 +13,6 @@ rootProject.name = "bp-bench"
 dependencyResolutionManagement {
     repositories {
         mavenCentral()
-        maven {
-            url = uri("https://artifacts.eng.sldomain.com/repository/spectra/")
-        }
-        maven {
-            url = uri("https://jitpack.io")
-        }
     }
     versionCatalogs {
         create("libs") {
@@ -32,7 +26,8 @@ dependencyResolutionManagement {
             version("ds3", "5.6.0")
 
             library("cliktJvm", "com.github.ajalt.clikt", "clikt-jvm").versionRef("clikt")
-            library("ds3sdk", "com.github.spectralogic", "ds3_java_sdk").versionRef("ds3")
+            library("ds3Bom", "com.spectralogic.ds3", "ds3-bom").versionRef("ds3")
+            library("ds3sdk", "com.spectralogic.ds3", "ds3-sdk").withoutVersion()
             library("kotlinBom", "org.jetbrains.kotlin", "kotlin-bom").versionRef("kotlin")
             library("kotlinReflect", "org.jetbrains.kotlin", "kotlin-reflect").withoutVersion()
             library("kotlinStdlib", "org.jetbrains.kotlin", "kotlin-stdlib").withoutVersion()
