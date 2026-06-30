@@ -12,6 +12,7 @@ plugins {
 }
 
 group = "com.spectralogic"
+version = "1.2.0"
 
 dependencies {
     implementation(platform(libs.ds3Bom))
@@ -29,7 +30,7 @@ dependencies {
 
 kotlin {
     jvmToolchain {
-        languageVersion.set(JavaLanguageVersion.of(18))
+        languageVersion.set(JavaLanguageVersion.of(26))
         vendor.set(JvmVendorSpec.ADOPTIUM)
     }
 }
@@ -38,9 +39,9 @@ tasks.test {
     useJUnitPlatform { }
 }
 
-tasks.compileKotlin {
-    kotlinOptions {
-        freeCompilerArgs = listOf("-opt-in=kotlinx.coroutines.FlowPreview")
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+    compilerOptions {
+        freeCompilerArgs.add("-opt-in=kotlinx.coroutines.FlowPreview")
     }
 }
 
@@ -50,5 +51,5 @@ application {
 
 tasks.wrapper {
     // to upgrade the gradle wrapper, bump the version below and run ./gradlew wrapper twice
-    gradleVersion = "8.1.1"
+    gradleVersion = "9.6.1"
 }
