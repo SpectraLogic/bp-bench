@@ -9,6 +9,10 @@
 - **No Disk I/O**: Uses memory buffers to ensure performance measurements focus on network and BlackPearl processing.
 - **Configurable**: Supports configuration of endpoint, credentials, bucket, thread count, buffer size, and more via command-line options or environment variables.
 
+## Prerequisites
+
+- **Java 26**: This tool is compiled for Java 26. Ensure you have Java 26 or later installed, or use the provided Gradle wrapper which will handle the toolchain for you.
+
 ## Usage
 
 The tool provides two main subcommands: `put` and `get`.

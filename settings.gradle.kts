@@ -5,7 +5,7 @@
  */
 
 plugins {
-    id("org.gradle.toolchains.foojay-resolver-convention").version("0.5.0")
+    id("org.gradle.toolchains.foojay-resolver-convention").version("1.0.0")
 }
 
 rootProject.name = "bp-bench"
@@ -19,7 +19,7 @@ dependencyResolutionManagement {
             //    implementation("com.github.spectralogic.ds3_java_sdk:ds3-sdk:5.4.0")
 
             version("clikt", "3.5.0")
-            version("kotlin", "1.7.10")
+            version("kotlin", "2.4.0")
             version("kotlinTest", "3.4.2")
             version("kotlinxCoroutines", "1.6.2")
             version("mockk", "1.12.4")
