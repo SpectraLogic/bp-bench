@@ -23,7 +23,7 @@ dependencyResolutionManagement {
             version("kotlinTest", "3.4.2")
             version("kotlinxCoroutines", "1.6.2")
             version("mockk", "1.12.4")
-            version("ds3", "5.6.0")
+            version("ds3", "6.0.0")
 
             library("cliktJvm", "com.github.ajalt.clikt", "clikt-jvm").versionRef("clikt")
             library("ds3Bom", "com.spectralogic.ds3", "ds3-bom").versionRef("ds3")
