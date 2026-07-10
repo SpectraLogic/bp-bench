@@ -36,3 +36,13 @@ bpBench get -b <BUCKET> [OPTIONS]
 - `-s`, `--secretkey`: BlackPearl secret key (can be set via environment variable `BP_SECRET_KEY`).
 - `-b`, `--bucket`: Target BlackPearl bucket (can be set via environment variable `BP_BUCKET`).
 - `-t`, `--threads`: Number of threads to use for transfers (default: 10).
+
+## Building
+
+To create a distribution zip file containing the executable and all necessary libraries, run:
+
+```bash
+./gradlew distZip
+```
+
+The generated zip file will be located in `build/distributions/`. When creating a new release on GitHub, this distribution zip file should be uploaded as a release asset.
